@@ -1,0 +1,26 @@
+services:
+  idle-space-rpg:
+    build: .
+    container_name: idle-space-rpg
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - bot-data:/data
+    networks:
+      - irc-net
+    # If running alongside your existing ergo stack,
+    # connect to the same Docker network
+    # external_links:
+    #   - ergo:irc
+
+volumes:
+  bot-data:
+    driver: local
+
+networks:
+  irc-net:
+    driver: bridge
+    # To connect to your existing ergo network:
+    # external: true
+    # name: your_ergo_network_name

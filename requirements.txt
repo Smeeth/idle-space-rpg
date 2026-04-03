@@ -1,0 +1,2 @@
+irc>=20.0
+jaraco.stream>=3.0
