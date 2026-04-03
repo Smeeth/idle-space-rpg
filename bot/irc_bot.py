@@ -31,7 +31,13 @@ class IdleSpaceBot:
 
     def __init__(self, config: Config):
         self.config = config
-        self.db = Database(config.database.db_path)
+        self.db = Database(
+            host=config.database.host,
+            port=config.database.port,
+            user=config.database.user,
+            password=config.database.password,
+            database=config.database.database,
+        )
         self.engine = GameEngine(self.db, config.game)
         self.reactor = irc.client_aio.AioReactor()
         self.connection = None
@@ -220,10 +226,7 @@ class IdleSpaceBot:
                 connection.privmsg(target, "Usage: ALIGN <good|neutral|evil>")
                 return
             alignment = parts[1].lower()
-            self.db.conn.execute(
-                "UPDATE players SET alignment = ? WHERE nick = ?", (alignment, nick)
-            )
-            self.db.conn.commit()
+            self.db.update_alignment(nick, alignment)
             connection.privmsg(
                 target, f"{nick} has aligned with the {alignment} faction."
             )
@@ -256,7 +259,6 @@ class IdleSpaceBot:
         if self._game_loop_task:
             self._game_loop_task.cancel()
         # Set all players offline
-        self.db.conn.execute("UPDATE players SET online = 0")
-        self.db.conn.commit()
+        self.db.set_all_offline()
         self.db.close()
         logger.info("Bot shut down.")

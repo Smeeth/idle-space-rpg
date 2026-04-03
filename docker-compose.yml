@@ -5,17 +5,34 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    volumes:
-      - bot-data:/data
+    depends_on:
+      mariadb:
+        condition: service_healthy
     networks:
       - irc-net
-    # If running alongside your existing ergo stack,
-    # connect to the same Docker network
-    # external_links:
-    #   - ergo:irc
+
+  mariadb:
+    image: mariadb:11
+    container_name: idle-space-rpg-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - irc-net
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
-  bot-data:
+  db-data:
     driver: local
 
 networks:

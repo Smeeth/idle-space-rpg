@@ -60,7 +60,7 @@ Choose **good**, **neutral**, or **evil**:
 
 ```bash
 cp .env.example .env
-# Edit .env with your IRC server details
+# Edit .env with your IRC server and MariaDB credentials
 docker compose up -d
 ```
 
@@ -71,13 +71,13 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-# Edit .env
+# Edit .env (set DB_HOST to your MariaDB host)
 python -m bot
 ```
 
 ## Docker Integration
 
-This bot is designed to run alongside your existing IRC infrastructure. To connect it to your Ergo IRCd Docker network:
+This bot runs alongside your existing IRC infrastructure. The stack includes a MariaDB 11 container for game state persistence. To connect to your Ergo IRCd Docker network:
 
 ```yaml
 # In docker-compose.yml, uncomment and adjust:
@@ -95,10 +95,9 @@ idle-space-rpg/
 │   ├── __init__.py
 │   ├── __main__.py       # Entry point
 │   ├── config.py         # Configuration (env vars)
-│   ├── database.py       # SQLite persistence
+│   ├── database.py       # MariaDB persistence
 │   ├── game_engine.py    # Core game logic
 │   └── irc_bot.py        # IRC connection & commands
-├── data/                 # Database storage (Docker volume)
 ├── tests/
 ├── Dockerfile
 ├── docker-compose.yml

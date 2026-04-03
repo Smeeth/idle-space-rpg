@@ -42,9 +42,13 @@ class GameConfig:
 
 @dataclass
 class DatabaseConfig:
-    """Database settings."""
+    """MariaDB connection settings."""
 
-    db_path: str = os.getenv("DB_PATH", "/data/idle_space_rpg.db")
+    host: str = os.getenv("DB_HOST", "mariadb")
+    port: int = int(os.getenv("DB_PORT", "3306"))
+    user: str = os.getenv("DB_USER", "idlerpg")
+    password: str = os.getenv("DB_PASSWORD", "changeme")
+    database: str = os.getenv("DB_NAME", "idle_space_rpg")
 
 
 @dataclass

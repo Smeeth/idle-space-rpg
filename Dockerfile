@@ -3,6 +3,13 @@ FROM python:3.12-slim
 LABEL maintainer="eibo.richter@gmail.com"
 LABEL description="Idle Space RPG - IRC Idle Game Bot"
 
+# Install MariaDB C connector (required for mariadb Python package)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libmariadb-dev \
+        gcc && \
+    rm -rf /var/lib/apt/lists/*
+
 # Create non-root user
 RUN groupadd -r botuser && useradd -r -g botuser botuser
 
@@ -14,9 +21,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy bot code
 COPY bot/ ./bot/
-
-# Create data directory
-RUN mkdir -p /data && chown botuser:botuser /data
 
 # Switch to non-root user
 USER botuser

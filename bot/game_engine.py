@@ -174,10 +174,7 @@ class GameEngine:
         new_role = self._get_role_for_level(new_level)
 
         self.db.level_up(nick, new_ttl)
-        self.db.conn.execute(
-            "UPDATE players SET crew_role = ? WHERE nick = ?", (new_role, nick)
-        )
-        self.db.conn.commit()
+        self.db.update_crew_role(nick, new_role)
 
         msg = random.choice(LEVEL_UP_MESSAGES).format(
             nick=nick, level=new_level, role=new_role
